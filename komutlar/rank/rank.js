@@ -5,6 +5,7 @@ const Jimp = require('jimp');
 const path = require('path');
 const text2png = require('text2png');
 const sizeOf = require('image-size');
+const shortNumber = require('short-number');
 
 const komutAdı = __filename.replace(__dirname, "").replace("/", "").replace(".js", "")
 
@@ -19,12 +20,15 @@ exports.run = async (client, message, args) => {
 
     let barPos = { x: 373, y: 160 }
     let barSize = { width: 788, height: 43 }
+    console.log(db.get("ranks_667115809449050150.ses"))
+    //sıralama
+    let topList = Object.values(db.get(`ranks_${guild.id}.ses`)).sort((a, b) => b.expCurrent - a.expCurrent)
 
     let progress = (db.has(`ranks_${guild.id}.ses.${user.id}.expCurrent`) && db.has(`ranks_${guild.id}.ses.${user.id}.expMax`) ? (parseFloat(db.get(`ranks_${guild.id}.ses.${user.id}.expCurrent`)) / parseFloat(db.get(`ranks_${guild.id}.ses.${user.id}.expMax`))) : 0) * barSize.width;
-    let sıraInput = db.has(`ranks_${guild.id}.ses.${user.id}.sıra`) ? db.get(`ranks_${guild.id}.ses.${user.id}.sıra`).toString() : "1";
+    let sıraInput = db.has(`ranks_${guild.id}.ses`) ? ((topList.indexOf(topList.find(a => a.id == user.id)) + 1)==0?topList.length+1:(topList.indexOf(topList.find(a => a.id == user.id)) + 1)).toString() : "1";
     let levelInput = db.has(`ranks_${guild.id}.ses.${user.id}.level`) ? db.get(`ranks_${guild.id}.ses.${user.id}.level`).toString() : "1";
-    let expCurrentInput = db.has(`ranks_${guild.id}.ses.${user.id}.expCurrent`) ? db.get(`ranks_${guild.id}.ses.${user.id}.expCurrent`).toString() : "0";
-    let expMaxInput = db.has(`ranks_${guild.id}.ses.${user.id}.expMax`) ? db.get(`ranks_${guild.id}.ses.${user.id}.expMax`).toString() : "788";
+    let expCurrentInput = db.has(`ranks_${guild.id}.ses.${user.id}.expCurrent`) ? shortNumber(parseInt(db.get(`ranks_${guild.id}.ses.${user.id}.expCurrent`))).toString() : "0";
+    let expMaxInput = db.has(`ranks_${guild.id}.ses.${user.id}.expMax`) ? shortNumber(parseInt(db.get(`ranks_${guild.id}.ses.${user.id}.expMax`))).toString() : "788";
 
 
     let açıkRenk = "52a786";

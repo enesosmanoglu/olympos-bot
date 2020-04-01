@@ -27,7 +27,8 @@
     "discord-backup": "^2.1.13",
     "jimp": "^0.10.0",
     "text2png": "^2.2.0",
-    "image-size": "^0.8.3"
+    "image-size": "^0.8.3",
+    "short-number": "^1.0.7"
   },
   "engines": {
     "node": "12.16.1"

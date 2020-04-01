@@ -17,6 +17,7 @@ module.exports = async (oldVoiceState, newVoiceState) => {
 
   if (!oldVoiceState.channelID && newVoiceState.channelID) {
     // Sesli odaya katılmış.
+    console.log(user.tag + " sesli odaya katıldı.")
     const voiceChannel = guild.channels.cache.find(c => c.id == newVoiceState.channelID)
 
     let rank = {
@@ -32,10 +33,11 @@ module.exports = async (oldVoiceState, newVoiceState) => {
       rank = db.get(`ranks_${guild.id}.ses.${user.id}`);
 
     if (!client.sesTimers) client.sesTimers = {};
-    client.sesTimers[user.id] = setInterval(() => {
+    client.sesTimers[user.id] = client.setInterval(() => {
+      if (member.voice.selfMute || member.voice.serverMute) return;
       rank.expCurrent += 0.3;
 
-      if (rank.expMax >= rank.expCurrent) {
+      if (rank.expCurrent >= rank.expMax) {
         // LEVEL UP
         rank.level += 1;
         rank.expMax = ayarlar.ranks.ses.expMaxs[rank.level - 1]
@@ -50,10 +52,11 @@ module.exports = async (oldVoiceState, newVoiceState) => {
 
 
   } else if (oldVoiceState.channelID && !newVoiceState.channelID) {
+    console.log(user.tag + " sesli odadan ayrıldı.")
     // sesli odadan ayrılmış.
     //const voiceChannel = guild.channels.cache.find(c => c.id == oldVoiceState.channelID)
 
-    clearInterval(client.sesTimers[user.id]);
+    client.clearInterval(client.sesTimers[user.id]);
   }
 
 
