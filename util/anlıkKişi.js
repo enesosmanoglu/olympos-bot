@@ -5,6 +5,7 @@ const backup = require("discord-backup");
 const moment = require("moment");
 
 module.exports = client => {
+    return;
     const guild = client.guilds.cache.find(g => g.id == ayarlar.sunucu);
     if (!guild) return console.error("Ana sunucu bulunamadı! (ayarlar.sunucu). Anlık kişi sayısı sistemi çalışmayacaktır.")
 

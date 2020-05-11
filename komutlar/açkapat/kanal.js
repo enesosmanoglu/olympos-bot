@@ -10,23 +10,27 @@ exports.run = async (client, message, args) => {
     /* KOD BAŞLANGICI */
     ////////////////////  
 
-    if (args.length != 1 || !["aç","kapat"].some(a=>a == args[0].toLowerCase()))
+    if (args.length != 1 || !["aç", "kapat"].some(a => a == args[0].toLowerCase()))
         return message.channel.send(new Discord.MessageEmbed()
             .setTitle(`Hatalı kullanım ●︿●`)
-            .addField(`Nasıl kullanılır?`,`${ayarlar.prefix}${komutAdı} **aç**\n${ayarlar.prefix}${komutAdı} **kapat**`)
+            .addField(`Nasıl kullanılır?`, `${ayarlar.prefix}${komutAdı} **aç**\n${ayarlar.prefix}${komutAdı} **kapat**`)
             .setColor("RANDOM")
         ).then(msg => msg.delete({ timeout: 10000 }));
 
     let durum = args[0].toLowerCase() == "aç" ? true : false
- 
-    await message.channel.updateOverwrite(message.guild.roles.everyone.id,
-        {
-            SEND_MESSAGES: durum
-        }
-    );
+
+    let roles = {
+        taglı: message.guild.roles.cache.find(r => r.name == "Elite of Olympos"),
+        tagsız: message.guild.roles.cache.find(r => r.name == "Rebel of Olympos"),
+        kayıtsız: message.guild.roles.cache.find(r => r.name == "Peasant of Olympos"),
+        herkes: message.guild.roles.everyone,
+    }
+    Object.values(roles).forEach(async role => {
+        await message.channel.updateOverwrite(role, { SEND_MESSAGES: durum })
+    });
 
     await message.channel.send(new Discord.MessageEmbed()
-        .setDescription(`Kanal mesaj yazımına **${durum?"açıldı":"kapatıldı"}!**`)
+        .setDescription(`Kanal mesaj yazımına **${durum ? "açıldı" : "kapatıldı"}!**`)
         .setColor("RANDOM")
     )
 
@@ -36,7 +40,7 @@ exports.conf = {
     enabled: true,
     guildOnly: true,
     aliases: ['kanalmute'],
-    perms: ayarlar.perms.yetkili // => Yetkisiz komut: @everyone
+    perms: ayarlar.perms.vipüstü // => Yetkisiz komut: @everyone
 };
 exports.help = {
     name: komutAdı,

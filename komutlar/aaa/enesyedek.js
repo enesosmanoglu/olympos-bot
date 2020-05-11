@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const ayarlar = require("/app/ayarlar.json");
+const ayarlar = require("/app/ayarlar");
 const db = require('quick.db');
 const komutAdı = __filename.split("/")[__filename.split("/").length - 1].replace(".js","")
 
@@ -13,7 +13,7 @@ exports.run = async (client, message, args) => {
       
     })
     let sıralama = yedekDb.get("sıralama")
-    console
+    
   
     message.channel.send(sıralama)
 
@@ -23,7 +23,7 @@ exports.conf = {
     enabled: true,
     guildOnly: true,
     aliases: [],
-    perms: ["Zeus", "Athena"] // => Yetkisiz komut: @everyone
+    perms: ["Zeus", "POSEIDON"] // => Yetkisiz komut: @everyone
 };
 
 exports.help = {

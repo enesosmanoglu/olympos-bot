@@ -15,8 +15,8 @@ module.exports = client => {
     let dgBilgiCh = guild.channels.cache.find(r => r.name == "dgko-bilgi")
     if (!dgBilgiCh) console.log("'dgko-bilgi' kanalı bulunamadığı için doğum günü bilgi mesajları gönderileyemecektir.")
 
-    console.log(moment().utcOffset(3).format("D MMMM"))
-    console.log(db.get(`dg.last_${guild.id}.day`))
+    //console.log(moment().utcOffset(3).format("D MMMM"))
+    //console.log(db.get(`dg.last_${guild.id}.day`))
 
     setInterval(async () => {
         if (parseInt(moment().utcOffset(3).format("HHmmss")) >= parseInt("000000") && db.get(`dg.last_${guild.id}.day`) != moment().utcOffset(3).format("DD")) { // Her gün saat 00:00'da dg kontrol

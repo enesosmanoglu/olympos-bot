@@ -9,7 +9,7 @@ exports.run = (client, message, args) => {
 };
 
 exports.conf = {
-    perms: ["Zeus"],
+    perms: ayarlar.perms.üst,
     // => Yetkisiz komut: @everyone
     // => Sadece kayıtlılar: ["Apollo", "Artemis"]
   enabled: true,

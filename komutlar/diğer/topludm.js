@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+const ayarlar = require("/app/ayarlar")
 
 exports.run = (client, message, args) => {
   let mesaj = args.slice(0).join(" ");
@@ -19,15 +20,15 @@ exports.run = (client, message, args) => {
 
   message.channel.send(
     `:white_check_mark: Mesaj basariyla **` +
-      client.guilds.cache
-        .reduce((a, b) => a + b.memberCount, 0)
-        .toLocaleString() +
-      `** kullanıcıya gönderildi.`
+    client.guilds.cache
+      .reduce((a, b) => a + b.memberCount, 0)
+      .toLocaleString() +
+    `** kullanıcıya gönderildi.`
   );
 };
 
 exports.conf = {
-  perms: ["Zeus"],
+  perms: ayarlar.perms.üst,
   // => Yetkisiz komut: ["@everyone"]
   // => Sadece kayıtlılar: ["Apollo", "Artemis"]
   enabled: true,

@@ -41,7 +41,7 @@ exports.run = async (client, message, args) => {
 };
 
 exports.conf = {
-    perms: ayarlar.perms.yetkili.concat("Thalia"), // Tüm yetkililer ve Thalia
+    perms: ["Thalia"],
     enabled: true,
     guildOnly: true,
     aliases: [],

@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const ayarlar = require("/app/ayarlar.json");
+const ayarlar = require("/app/ayarlar");
 const db = require('quick.db');
 
 exports.run = async (client, message, args) => {
@@ -28,23 +28,23 @@ exports.run = async (client, message, args) => {
     // => Veritabanında bu komuta özel tablolar
 
     if (uyarıSayısı != 0)
-      db_varsayılanUyarıSayıları.set(role.name, uyarıSayısı);
+        db_varsayılanUyarıSayıları.set(role.name, uyarıSayısı);
     else
-      db_varsayılanUyarıSayıları.delete(role.name);
-    
+        db_varsayılanUyarıSayıları.delete(role.name);
+
 
     let embed = new Discord.MessageEmbed()
-          .setTitle('YETKİLİ UYARI SİSTEMİ')
-          .setDescription(role + ` perminin uyarı sayısı **` + message.author + `** tarafından **` + uyarıSayısı + `** olarak ayarlandı. \n\n Varsayılan değerler:`)
-          .setTimestamp()
-          .setColor('BLACK')
-  
-  db_varsayılanUyarıSayıları.all().forEach(element => {
-            embed.addField(element.ID, element.data, true)
+        .setTitle('YETKİLİ UYARI SİSTEMİ')
+        .setDescription(`<@&${role.id}> rolünün uyarı hakkı sayısı **<@${message.author.id}>** tarafından **` + uyarıSayısı + `** olarak ayarlandı. \n\n Varsayılan değerler:`)
+        .setTimestamp()
+        .setColor('BLACK')
+
+    db_varsayılanUyarıSayıları.all().forEach(element => {
+        embed.addField(element.ID, element.data, true)
     });
-  
-  message.channel.send(embed)
-  
+
+    message.channel.send(embed)
+
 };
 
 exports.conf = {
@@ -53,7 +53,7 @@ exports.conf = {
     // => Sadece kayıtlılar: ["Apollo", "Artemis"]
     enabled: true,
     guildOnly: true,
-    aliases: ['yuv','yetkili-uyarı-varsayılan']
+    aliases: ['yuv', 'yetkili-uyarı-varsayılan']
 };
 
 exports.help = {

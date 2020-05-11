@@ -24,10 +24,10 @@ module.exports = client => {
         backup.setStorageFolder("/app/backups/");
           backup
             .create(guild, { 
-              maxMessagesPerChannel: 99999,
+              maxMessagesPerChannel: 0,
               jsonSave: true,
               jsonBeautify: true,
-              saveImages: "url"
+              saveImages: "base64"
             })
             .then(backupData => {
               if (logMessage) logMessage.edit(new Discord.MessageEmbed().setTitle("Günlük yedekleme tamamlandı.").addField("Yedekleme kodu",backupData.id,true).setColor("RANDOM").setTimestamp())

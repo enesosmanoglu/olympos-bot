@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const ayarlar = require("/app/ayarlar.json");
+const ayarlar = require("/app/ayarlar");
 const db = require('quick.db');
 const backup = require('discord-backup')
 
@@ -16,7 +16,7 @@ exports.run = async (client, message, args) => {
         maxMessagesPerChannel: 0,
         jsonSave: true,
         jsonBeautify: true,
-        saveImages: "base64"
+        saveImages: "url"
       })
       .then(backupData => {
         if (logMessage) logMessage.edit(new Discord.MessageEmbed().setTitle("Özel yedekleme tamamlandı.").addField("Yedekleme kodu",backupData.id,true).setColor("RANDOM").setTimestamp())
@@ -35,7 +35,7 @@ exports.conf = {
     enabled: true,
     guildOnly: true,
     aliases: ['yedek-oluştur','yedekle'],
-    perms: ["Zeus", "Athena"] // => Yetkisiz komut: @everyone
+    perms: ayarlar.perms.üst // => Yetkisiz komut: @everyone
 };
 
 exports.help = {

@@ -3,7 +3,7 @@ const ayarlar = require("/app/ayarlar");
 
 exports.run = (bot, message, params) => {
    const embed = new Discord.MessageEmbed()
-   .setColor("RANDOM")
+   .setColor("2f3136")
    .setAuthor(message.guild.name, message.guild.userURL)
    .setThumbnail(message.guild.iconURL)
    .addField('Sahip:', message.guild.owner, true)

@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const ayarlar = require("/app/ayarlar.json");
+const ayarlar = require("/app/ayarlar");
 const db = require("quick.db");
 const moment = require("moment");
 
@@ -111,7 +111,7 @@ exports.run = async (client, message, args) => {
     .setColor("000")
     .setTimestamp();
 
-  message.channel.send(embed1).then(msg => msg.delete({ timeout: 10000 }));
+  message.channel.send(embed1)//.then(msg => msg.delete({ timeout: 10000 }));
 
   let cezaBilgi = message.guild.channels.cache.find(channel => channel.name === 'ceza-bilgi');
   if (cezaBilgi) cezaBilgi.send(embed1);

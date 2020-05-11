@@ -10,7 +10,7 @@ exports.run = async (client, message, args) => {
     if (!rMember)
         return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`**${komutAdı}** verilecek kişiyi etiketlemelisin ◑.◑\nÖrnek: ${ayarlar.prefix}${komutAdı} **@nick**`)
-            .setColor("RANDOM")
+            .setColor(ayarlar.renk)
             .setTimestamp()
         );
 
@@ -20,7 +20,7 @@ exports.run = async (client, message, args) => {
         return message.channel.send(
             new Discord.MessageEmbed()
                 .setDescription(`**${komutAdı}** rolünü bulamıyorum. ●︿●`)
-                .setColor("RANDOM")
+                .setColor(ayarlar.renk)
                 .setTimestamp()
         );
 
@@ -28,20 +28,20 @@ exports.run = async (client, message, args) => {
         return message.channel.send(
             new Discord.MessageEmbed()
                 .setDescription(`Zaten **${aRole}** rolüne sahip.`)
-                .setColor("RANDOM")
+                .setColor(ayarlar.renk)
         );
 
     await rMember.roles.add(aRole.id);
 
     await message.channel.send(new Discord.MessageEmbed()
         .setDescription(`${rMember.user} artık **${aRole}** rolüne sahip.`)
-        .setColor("RANDOM")
+        .setColor(ayarlar.renk)
     );
 
 };
 
 exports.conf = {
-    perms: ayarlar.perms.yetkili.concat("Thalia"), // Tüm yetkililer ve Thalia
+    perms: ["Thalia"], 
     enabled: true,
     guildOnly: true,
     aliases: [],

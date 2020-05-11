@@ -1,0 +1,35 @@
+1. Yetkililer herhangi birisiyle seviyesizce asla tartışamaz. (1 Uyarı)
+♥
+2. Yetkililer, tartışmalarda ara bulucu olmalıdır ve asla taraf tutamaz. (1 Uyarı)
+♥
+3. Yetkililerin kendi aralarında seviyesizce tartışması yasaktır. (2 Uyarı)
+♥
+4. Yetkililer, kendilerine edilen küfürde - hakarette vs. sinirlenip normalde verilen cezadan daha yüksek ceza veremez. (2 Uyarı)
+♥
+5. Sunucuya kötü niyetli birileri geldiğinde veya kötü bir durum oluştuğunda ''SALDIRI VAARR'' gibi ortalığı ayağa kaldırmak yasaktır. Koruma botları varken size düşmez. (2 Uyarı)
+♥
+6. Üst yönetimden birisiyle birazcık samimi oldunuz diye dalga geçmek, trollü abartmak, hakaret ve küfür etmek, gevşemek kesinlikle yasaktır. (2 Uyarı)
+♥
+7. Kayıt ettikleriniz bot tarafından sayılıyor diye kayıt almak için kavga etmek yasaktır. (2 uyarı) Kayıt geldiğinde ilk yanıtlayan kaydı alabilir.
+♥
+8. İşlem uygulanan birinin cezasını işlemi uygulayan kişi dışında kimse kaldıramaz. (2 Uyarı)
+♥
+9. Herhangi birinin lafı üzerine işlem yapmak yasaktır. Kanıtsız hiçbir şikayet için işlem yapılamaz. (2 Uyarı)
+♥
+10. Kimseyi 'kendi görüşünden, inancından, zevkinden vb. farklı olduğu için' cezalandıramaz veya dalga geçemezsiniz. (4 Uyarı)
+♥
+11. Aktif olduğu halde sunucuyla hiç ilgilenmeyip başka aktivitelerle uğraşan yetkililerin doğrudan yetkisi alınır.
+♥
+12. Çevrimiçi olduğu halde görevden kaçmak için çevrimdışına alan yetkililerin yetkisi doğrudan alınır. (Uyarsak da isteksiz olduğu için eninde sonunda atılacaktır zaten.)
+♥
+13. Kuralları görmezden gelip sırf egosuna göre hareket eden, üyelere kaba davranan, küçük gören yetkililerin doğrudan yetkisi alınır.
+♥
+14. Hesap bilgilerinizi herhangi biriyle paylaşırsanız doğrudan yetkiniz alınır.
+♥
+15. Kendi çıkarlarınız için yetkinizi kullanırsanız, haksız yere birini cezalandırırsanız doğrudan yetkiniz alınır.
+♥
+16. ''Uyarı hakkım var nasılsa'' düşüncesiyle kasıtlı olarak bir kural çiğnerseniz doğrudan yetkiniz alınır.
+♥
+17. Komut sebeplerine sebep yazmamak, nokta koymak vs. yasaktır. (1 uyarı)
+♥
+18. Ses teyit almadan kayıt almak yasaktır. Arkadaşınız olması da bir şeyi değiştirmez. (1 uyarı)

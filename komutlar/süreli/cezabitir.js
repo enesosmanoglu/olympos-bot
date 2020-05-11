@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const ayarlar = require("/app/ayarlar.json");
+const ayarlar = require("/app/ayarlar");
 const db = require("quick.db");
 const moment = require("moment");
 
@@ -60,7 +60,7 @@ exports.run = (client, message, args) => {
 };
 
 exports.conf = {
-  perms: ayarlar.perms.yetkili,
+  perms: ["Zeus", "POSEIDON", "Hera", "Hades", "Demeter", "Athena", "Ares", "Hephaistos", "Aphrodite", "Hermes", "Hestia"],
   enabled: true,
   guildOnly: true,
   aliases: ["sesunmute"],

@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const ayarlar = require("/app/ayarlar.json");
+const ayarlar = require("/app/ayarlar");
 const db = require('quick.db');
 
 exports.run = async (client, message, args) => {
@@ -27,13 +27,13 @@ exports.run = async (client, message, args) => {
     let targetMaxRoleID = 0;
 
     message.member.roles.cache.forEach(role => {
-      if (ayarlar.perms.yetkisizAraRoller.some(r=>r==role.name)) return console.log(role.name + " rolü yok sayıldı.");
+        if (ayarlar.perms.yetkisizAraRoller.some(r => r == role.name)) return console.log(role.name + " rolü yok sayıldı.");
         if (authorMaxRoleID < role.position)
             authorMaxRoleID = role.position
     });
 
     user.roles.cache.forEach(role => {
-      if (ayarlar.perms.yetkisizAraRoller.some(r=>r==role.name)) return console.log(role.name + " rolü yok sayıldı.");
+        if (ayarlar.perms.yetkisizAraRoller.some(r => r == role.name)) return console.log(role.name + " rolü yok sayıldı.");
         if (targetMaxRoleID < role.position)
             targetMaxRoleID = role.position
     });
@@ -78,7 +78,7 @@ exports.run = async (client, message, args) => {
 
         if (userUyarıSayısı >= varsayılanUyarıSayısı) {
             // => Uyarı sayısı limitine ulaştı.
-            
+
             userUyarıSayısı = varsayılanUyarıSayısı;
             // => Fazlalığa gerek yok.
 
@@ -91,23 +91,19 @@ exports.run = async (client, message, args) => {
         // => Adam temiz çıktı aga
         return message.reply("Adamın uyarısı yok ki");
     }
-    
+
     db_uyarıSayısı.set(user.id, userUyarıSayısı);
     // ALTTAKİ KODLAR ÇALIŞMAZ ÜSTTEKİ RETURN YÜZÜNDEN KOPYALA YAPIŞTIR İÇİN ORADA DURUYOR EDİTLERSİN.
 
     let embed1 = new Discord.MessageEmbed()
         .setTitle(`YETKİLİ UYARI SİSTEMİ`)
-        .setDescription(user + ` yetkilisinin **` + uyarıSayısı + ` uyarı sayısı** ` + message.author + ` tarafından  silindi.`)
+        .setDescription(`<@${user.id}> yetkilisinin **` + uyarıSayısı + ` uyarı sayısı** <@${message.author}> tarafından  silindi.`)
         .setColor("000")
         .setTimestamp();
 
     let yetkiliUyarıCh = message.guild.channels.cache.find("name", "yetkili-uyarı");
     if (yetkiliUyarıCh)
-        yetkiliUyarıCh.send(new Discord.MessageEmbed()
-          .setTitle('YETKİLİ UYARI SİSTEMİ')
-          .setDescription(user + ` yetkilisinin **` + uyarıSayısı + ` uyarı sayısı**  silindi.`)
-          .setTimestamp()
-          .setColor('BLACK'))
+        yetkiliUyarıCh.send(embed1)
 
 };
 
@@ -117,7 +113,7 @@ exports.conf = {
     // => Sadece kayıtlılar: ["Apollo", "Artemis"]
     enabled: true,
     guildOnly: true,
-    aliases: ['yus','yetkili-uyarı-sil']
+    aliases: ['yus', 'yetkili-uyarı-sil']
 };
 
 exports.help = {

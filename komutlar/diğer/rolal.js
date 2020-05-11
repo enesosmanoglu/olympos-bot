@@ -15,13 +15,13 @@ let guild = message.guild
 
     const embed = new Discord.MessageEmbed()
         .setDescription(`${user} kullanıcısından ${rol} rolü alındı.`)
-        .setColor("000")
+        .setColor("2f3136")
         .setTimestamp()
     message.channel.send({ embed }).then(msg => msg.delete({ timeout: 10000 }));
 };
 
 exports.conf = {
-    perms: ayarlar.perms.vipüstü,
+    perms: ayarlar.perms.üstyönetim,
     // => Yetkisiz komut: ["@everyone"]
     // => Sadece kayıtlılar: ["Apollo", "Artemis"]
     enabled: true,

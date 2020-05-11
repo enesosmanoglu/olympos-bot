@@ -12,7 +12,7 @@ user.roles.add(rol);
   
    const embed = new Discord.MessageEmbed()
         .setDescription(`${user} kullanıcısına ${rol} rolü verildi.`)
-        .setColor("000")
+        .setColor("2f3136")
         .setTimestamp()
     message.channel.send({embed}).then(msg => msg.delete({ timeout: 10000 }));
 };

@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const db = require('quick.db');
-const ayarlar = require("/app/ayarlar.json");
+const ayarlar = require("/app/ayarlar");
 
 exports.run = async (client, message, args) => {
     if (!message.guild.members.cache.find(m => m.id == client.user.id).voice.channel) return message.channel.send("Seslide değilim.");

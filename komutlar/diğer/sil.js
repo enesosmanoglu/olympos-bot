@@ -151,7 +151,7 @@ exports.run = (Bot, Mesaj, Argüman) => {
 }
 
 exports.conf = {
-    perms: ayarlar.perms.vipüstü,
+    perms: ayarlar.perms.üstyönetim,
     // => Yetkisiz komut: ["@everyone"]
     // => Sadece kayıtlılar: ["Apollo", "Artemis"]
   enabled: true,

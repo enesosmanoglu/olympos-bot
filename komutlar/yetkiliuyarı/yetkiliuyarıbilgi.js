@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const ayarlar = require("/app/ayarlar.json");
+const ayarlar = require("/app/ayarlar");
 const db = require('quick.db');
 
 exports.run = async (client, message, args) => {
@@ -17,7 +17,10 @@ exports.run = async (client, message, args) => {
         else {
             let db_varsayılanUyarıSayıları = new db.table("uyarıSayısı_varsayılan"); // { role.name : uyarıSayısı }
             let varsayılan = db_varsayılanUyarıSayıları.get(role.name);
-            return message.reply(role + " rolünün varsayılan uyarı sayısı: " + varsayılan)
+            return message.reply(new Discord.MessageEmbed()
+                .setDescription(`<@&${role.id}> rolünün varsayılan uyarı hakkı sayısı: ${varsayılan}`)
+                .setColor(484848)
+            ).then(msg => msg.delete({ timeout: 10000 }));
         }
     }
 
@@ -30,13 +33,13 @@ exports.run = async (client, message, args) => {
     let targetMaxRoleID = 0;
 
     message.member.roles.cache.forEach(role => {
-      if (ayarlar.perms.yetkisizAraRoller.some(r=>r==role.name)) return console.log(role.name + " rolü yok sayıldı.");
+        if (ayarlar.perms.yetkisizAraRoller.some(r => r == role.name)) return console.log(role.name + " rolü yok sayıldı.");
         if (authorMaxRoleID < role.position)
             authorMaxRoleID = role.position
     });
 
     user.roles.cache.forEach(role => {
-      if (ayarlar.perms.yetkisizAraRoller.some(r=>r==role.name)) return console.log(role.name + " rolü yok sayıldı.");
+        if (ayarlar.perms.yetkisizAraRoller.some(r => r == role.name)) return console.log(role.name + " rolü yok sayıldı.");
         if (targetMaxRoleID < role.position)
             targetMaxRoleID = role.position
     });
@@ -66,15 +69,15 @@ exports.run = async (client, message, args) => {
         userUyarıSayısı = db_uyarıSayısı.get(user.id);
     } else {
         // => Adam temiz çıktı aga
-        return message.reply(user + " kullanıcısının uyarısı yok!");
+        return message.reply(`<@${user.id}> kullanıcısının hiç uyarısı yok!`);
     }
 
     message.channel.send(new Discord.MessageEmbed()
-          .setTitle('YETKİLİ UYARI SİSTEMİ')
-          .setDescription(user + ` yetkilisi **` + userUyarıSayısı + ` uyarı sayısına** sahip.`)
-          .setTimestamp()
-          .setColor('BLACK'))
-  
+        .setTitle('YETKİLİ UYARI SİSTEMİ')
+        .setDescription(`<@${user.id}> yetkilisi **` + userUyarıSayısı + ` uyarı hakkına** sahip.`)
+        .setTimestamp()
+        .setColor('BLACK'))
+
 };
 exports.conf = {
     perms: ["Zeus", "POSEIDON", "Hera", "Hades", "Demeter", "Athena", "Ares", "Hephaistos", "Aphrodite", "Hermes", "Hestia", "Dionysos"],
@@ -82,7 +85,7 @@ exports.conf = {
     // => Sadece kayıtlılar: ["Apollo", "Artemis"]
     enabled: true,
     guildOnly: true,
-    aliases: ['yub','yetkili-uyarı-bilgi']
+    aliases: ['yub', 'yetkili-uyarı-bilgi']
 };
 
 exports.help = {

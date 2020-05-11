@@ -15,7 +15,7 @@ exports.run = async (client, message, args) => {
 
     await message.channel.send(new Discord.MessageEmbed()
         .setDescription(`Sesli kanallardaki toplam kullanıcı sayısı: **${say}**`)
-        .setColor("RANDOM")
+        .setColor(ayarlar.renk)
     )//.then(msg => msg.delete({ timeout: 10000 }));
 
 };

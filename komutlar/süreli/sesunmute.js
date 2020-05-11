@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const ayarlar = require("/app/ayarlar.json");
+const ayarlar = require("/app/ayarlar");
 const db = require("quick.db");
 const moment = require("moment");
 

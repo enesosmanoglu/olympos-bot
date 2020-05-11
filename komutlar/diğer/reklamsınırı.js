@@ -16,7 +16,7 @@ exports.run = async (bot, message, args) => {
 };
 
 exports.conf = {
-    perms: ["Zeus", "POSEIDON", "Hera", "Hades"],
+    perms: ["Zeus", "POSEIDON"],
     // => Yetkisiz komut: @everyone
     // => Sadece kayıtlılar: ["Apollo", "Artemis"]
   enabled: true,

@@ -1,19 +1,29 @@
+const moment = require("moment");
+moment.locale("tr");
+
+var originalConsoleLog = console.log;
+console.log = function () {
+    args = [];
+    args.push('[' + moment().utcOffset(3).format("lll") + ']');
+    for (var i = 0; i < arguments.length; i++) {
+        args.push(arguments[i]);
+    }
+    originalConsoleLog.apply(console, args);
+};
+
+ 
 console.log(" \n \n \n \n \n \n \n \n \n")
 console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-console.log("Bot başlatılıyor. Lütfen bekleyiniz...")
+console.log(process.env.PROJECT_DOMAIN + " başlatılıyor. Lütfen bekleyiniz...")
 console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 const express = require("express");
 const app = express();
-const http = require("http");
 app.get("/", (request, response) => {
     console.log(`¨`);
     response.sendStatus(200);
-}); 
+});
 app.listen(process.env.PORT);
-setInterval(() => {
-    http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
-}, 10000);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -23,64 +33,26 @@ const client = new Discord.Client();
 const chalk = require("chalk");
 const fs = require("fs");
 const db = require("quick.db");
-const moment = require("moment");
 const backup = require("discord-backup");
-backup.setStorageFolder(__dirname+"/backups/");
+backup.setStorageFolder("./backups/");
 
 
 client.on("ready", () => {
-  require("./util/backup")(client);
+  console.log("sa")
+    require("./util/backup")(client);
 })
 
-client.ayarlar = require("./ayarlar.json");
+client.ayarlar = require("./ayarlar");
 
 require("./util/eventLoader")(client);
 
 const log = message => {
-    console.log(`[${moment().format("DD-MM-YYYY HH:mm:ss")}] ${message}`);
+    console.log(`[${moment().utcOffset(3).format("lll")}] ${message}`);
 };
 
 client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
 
-/*
-fs.readdir("./komutlar/", (err, files) => {
-    if (err) console.error(err);
-    log(`${files.length} komut yüklenecek.`);
-    `-------------------------`;
-    files.forEach(f => {
-        if (!f.endsWith(".js")) {
-            fs.readdir("./komutlar/" + f, (err, files2) => {
-                if (err) console.error(err);
-                log(`${files2.length} komut yüklenecek.`);
-                `-------------------------`;
-                files2.forEach(f2 => {
-                    let props = require(`./komutlar/${f}/${f2}`);
-
-                    log(`İşlenen komut: ${props.help.name}.`);
-                    client.commands.set(props.help.name, props);
-                    log(`-------------------------`);
-                    client.commands.set(props.help.name, props);
-                    props.conf.aliases.forEach(alias => {
-                        client.aliases.set(alias, props.help.name);
-                    });
-                });
-            });
-
-            return;
-        }
-        let props = require(`./komutlar/${f}`);
-
-        log(`İşlenen komut: ${props.help.name}.`);
-        client.commands.set(props.help.name, props);
-        log(`-------------------------`);
-        client.commands.set(props.help.name, props);
-        props.conf.aliases.forEach(alias => {
-            client.aliases.set(alias, props.help.name);
-        });
-    });
-});
-*/
 let komutlar = []
 let getCommands = function (path) {
     fs.readdir(path, (err, files) => {
@@ -88,12 +60,12 @@ let getCommands = function (path) {
         files.forEach(f => {
             if (!f.endsWith(".js")) {
                 // klasör ya da komut değil
-                
+
                 if (fs.lstatSync(path + f + "/").isDirectory()) {
                     // iç içe fonksiyonla tüm alt klasörlerdeki komutları tarıyoruz.
                     getCommands(path + f + "/")
                 }
-                
+
             } else {
                 //console.log(path + f) // Her komutun yolunu ayrı ayrı loglar
                 //komut.js
@@ -104,7 +76,7 @@ let getCommands = function (path) {
                     client.aliases.set(alias, props.help.name);
                 });
             }
-        });    
+        });
     });
 }
 
@@ -161,24 +133,87 @@ client.unload = command => {
         }
     });
 };
-
+client.randomMesajlar = new Discord.Collection();
+getRandomMessages()
+function getRandomMessages() {
+    let randomMesajlarPath = '/app/randomMesajlar/';
+    fs.readdir(randomMesajlarPath, (err, files) => {
+        if (err) console.error(err);
+        files.forEach(fileName => {
+            if (fileName.endsWith(".txt")) {
+                let mesajlar = fs.readFileSync(randomMesajlarPath + fileName, 'UTF-8').split("☻")
+                client.randomMesajlar.set(fileName.replace(".txt", ""), mesajlar);
+            }
+        });
+    });
+}
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function randomMessage(komut) {
+    const mesajlar = client.randomMesajlar.get(komut);
+    return mesajlar[getRandomInt(0, mesajlar.length - 1)]
+}
+client.replaceEmojis = function (text) {
+    let sp = text.split(":");
+    let emojis = {}
+    sp.forEach(str => {
+        let emoji = client.emojis.cache.find(e => e.name == str)
+        if (emoji)
+            emojis[str] = emoji
+    });
+    Object.keys(emojis).forEach(str => {
+        let emoji = emojis[str];
+        text = text.replace(eval(`/:${str}:/g`), emoji)
+    });
+    return text;
+}
 
 client.on("message", msg => {
-  if (!msg.author) return; 
-  if (msg.author.bot) return; // BOT SPAM KORUMA
-  
+    if (!msg.author) return;
+    if (msg.author.bot) return; // BOT SPAM KORUMA
+
+    if (msg.channel.name == "doğum-günü") {
+        return;
+    }
+
+    function sendImage(url) {
+        msg.channel.send(new Discord.MessageEmbed().setImage(url).setColor("2f3136"))
+    }
     function sendMessage(text, reply = false) {
+        if (reply)
+            msg.reply(new Discord.MessageEmbed().setDescription(text).setColor("2f3136"))
+        else
+            msg.channel.send(new Discord.MessageEmbed().setDescription(text).setColor("2f3136"))
+    }
+    function sendMsg(text, reply = false) {
         if (reply)
             msg.reply(text)
         else
             msg.channel.send(text)
     }
+
+
+    if (client.randomMesajlar.has(msg.content.toLowerCase()))
+        return sendMessage(client.replaceEmojis(randomMessage(msg.content.toLowerCase()).replace(/<@user>/g, `<@${msg.author.id}>`)));
+
     switch (msg.content.toLowerCase()) {
-        case "tag":
-            sendMessage("✧");
+        case client.ayarlar.prefix + "ranks":
+            sendMessage("Aylık yerine toplam sıralamayı görmek için: https://www.olymposweb.com/rank");
             break;
-        case "sa":
-            sendMessage("as");
+        case client.ayarlar.prefix + "toplamrank":
+            sendMessage("Aylık yerine toplam sıralamayı görmek için: https://www.olymposweb.com/rank");
+            break;
+        case client.ayarlar.prefix + "sıralama":
+            sendMessage("Aylık yerine toplam sıralamayı görmek için: https://www.olymposweb.com/rank");
+            break;
+        case "tag":
+            sendMsg("✧");
+            break;
+        case "!tag":
+            sendMsg("✧");
             break;
         case "sea":
             sendMessage("ase");
@@ -197,9 +232,6 @@ client.on("message", msg => {
             break;
         case "günaydın":
             sendMessage("Günün güzel geçsin ヾ(＾∇＾)", true);
-            break;
-        case "iyi geceler":
-            sendMessage("Rüyanda beni gör (⌐▨_▨)", true);
             break;
         case "olympos nedir":
             sendMessage("En yüksek dağ olan Olimpos dağı, Yunan mitolojisinde tanrıların oturduğu dağdır. Tanrıların kralı Zeus’un meskeni olan Olimpos, Zeus dışında, Yunan mitolojisinin 12 büyük tanrısının evidir. Bazı kaynaklarda Olympus, bazı kaynaklarda Olympos olarak geçer.");
@@ -256,10 +288,14 @@ client.on("message", msg => {
             sendMessage("Ya bi sal beni sal (¦ꎌ[▓▓]", false);
             break;
         case "atatürk":
-            sendMessage("https://i.pinimg.com/originals/de/1a/54/de1a541dcb7e3644d89aa67b6c5f7e17.gif", false);
+            let rnd = getRandomInt(0, client.ayarlar.atatürk.length - 1)
+            console.log(rnd)
+            sendImage(client.ayarlar.atatürk[rnd]);
             break;
         case "o7":
-            sendMessage("https://i.pinimg.com/originals/de/1a/54/de1a541dcb7e3644d89aa67b6c5f7e17.gif", false);
+            let rnd2 = getRandomInt(0, client.ayarlar.atatürk.length - 1)
+            console.log(rnd2)
+            sendImage(client.ayarlar.atatürk[rnd2]);
             break;
         case "web":
             sendMessage("**https://www.olymposweb.com**", false);
@@ -290,144 +326,20 @@ client.on("message", msg => {
 });
 
 ////////////////////////////// oynuyor yazısı
-
 const activities_list = [
     "www.olymposweb.com",
-    "www.olymposweb.com",
     "www.olymposweb.net",
-    "www.olymposweb.net"
+    "ria",
+    "jamie",
 ];
 
 client.on("ready", () => {
     setInterval(() => {
-        const index = Math.floor(Math.random() * (activities_list.length - 1) + 1);
-        client.user.setPresence({activity: { name: activities_list[index], type: 'WATCHING' }});
-      //client.user.setActivity(`this won't appear in the bot's custom status!`, {type: null})
+        const index = getRandomInt(0, activities_list.length - 1)
+        client.user.setPresence({ activity: { name: activities_list[index], type: 'WATCHING' } });
+        //client.user.setActivity(`this won't appear in the bot's custom status!`, {type: null})
     }, 5000);
 });
-
-//////////////// bot engel  
-/*  OLYGUARD SEBEBİYLE DEVRE DIŞI
-client.on("guildMemberAdd", member => {
-    if (!db.get("botengel_"+member.guild.id)) return
-  
-    const guild = member.guild;
-
-    let sChannel = member.guild.channels.cache.find(c => c.name === "bot-engel");
-
-    if (member.user.bot !== true) {
-    } else {
-        sChannel
-            .send(
-                `**OLYMPOS BOT ENGEL**
-Sunucuya bot eklendi ve güvenlik nedeniyle banlandı: **${member.user.tag}**
-@everyone`
-            )
-            .then(() => console.log(`yasaklandı ${member.displayName}`))
-            .catch(console.error);
-        member.ban(member);
-    }
-});
-*/
-
-////////////////////////ototag
-
-client.on("guildMemberAdd", async member => {
-    let tag = await db.fetch(`tag_${member.guild.id}`);
-    let tagyazi;
-    if (tag == null) tagyazi = member.setNickname(`${member.user.username}`);
-    else tagyazi = member.setNickname(`${tag} | ${member.user.username}`);
-});
-
-///////////////////////////////////////////// rol silme engeli
-/*  OLYGUARD SEBEBİYLE DEVRE DIŞI
-client.on("roleDelete", async role => {
-  return;
-    let mention = role.mentionable;
-    let hoist = role.hoist;
-    let color = role.hexColor;
-    let name = role.name;
-    let perms = role.permissions;
-    let position = role.position;
-    role.guild.roles.create({
-        name: name,
-        color: color,
-        hoist: hoist,
-        position: position,
-        permissions: perms,
-        mentionable: mention
-    });
-});
-*/
-
-///////////////////////////////////////////// reklam engeli banlı
-
-client.on("message", async message => {
-    if (!message.guild) return;
-    let kişiuyari = db.has(`uyarisayisi_${message.author.id}${message.guild.id}`) ? await db.fetch(`uyarisayisi_${message.author.id}${message.guild.id}`):0;
-    let sınır = await db.fetch(`reklamsınır_${message.guild.id}`);
-    let reklambanayar = await db.fetch(`reklambanayar_${message.guild.id}`);
-    let kullanici = message.member;
-    const reklambankelimeler = [
-        "discord.gg",
-        "/invite",
-        "discordapp/invite",
-        "discordgg"
-    ];
-    if (reklambanayar == "kapali") return;
-    if (reklambanayar == "acik") {
-        if (
-            reklambankelimeler.some(word =>
-                message.content.toLowerCase().includes(word)
-            )
-        ) {
-            if (!message.member.hasPermission("ADMINISTRATOR")) {
-                message.delete();
-                db.add(`uyarisayisi_${message.author.id}${message.guild.id}`, 1);
-                let reklambanuyari = new Discord.MessageEmbed()
-                    .addField(
-                        `Discord linki engellendi. ಠ▃ಠ`,
-                        `Linki atan kişi: **${message.author.tag}**\nUyarı sayısı: **${kişiuyari}/${sınır}**`
-                    )
-                    .setTimestamp()
-                    .setFooter(`${client.user.username}`, client.user.avatarURL);
-                message.channel
-                    .send(reklambanuyari)
-                    .then(message => message.delete(10000));
-                if (kişiuyari == sınır) {
-                    message.delete();
-                    kullanici.ban({
-                        reason: `${client.user.username} Anti Reklam Sistemi`
-                    });
-                    db.set(`uyarisayisi_${message.author.id}${message.guild.id}`, 1);
-                    let embed = new Discord.MessageEmbed()
-                        .addField(
-                            `Anti reklam sistemi bir kişiyi banladı. (⋋▂⋌)`,
-                            `Reklam yaptığı için banlanan kişi: **${kullanici}**`
-                        )
-                        .setTimestamp(new Date())
-                        .setFooter(`OLYMPOS BOSS`, client.user.avatarURL);
-                    message.channel.send(embed);
-                }
-            }
-        }
-    }
-});
-
-/*  YETKİ SIRALAMASI SİSTEMİ SEBEBİYLE DEVRE DIŞI BIRAKILDI
-client.elevation = message => {
-    if (!message.guild) {
-        return;
-    }
-    let permlvl = 0;
-    if (message.member.hasPermission("BAN_MEMBERS")) permlvl = 2;
-    if (message.member.hasPermission("ADMINISTRATOR")) permlvl = 3;
-    if (message.author.id === client.ayarlar.sahip) permlvl = 4;
-    return permlvl;
-};
-*/
-
-var hataKontrol = /[\w\d]{24}\.[\w\d]{6}\.[\w\d-_]{27}/g;
 
 client.on("error", e => {
     console.log("Hata oluştu!");
@@ -437,6 +349,10 @@ client.on("disconnect", e => {
     console.log("Botun bağlantısı kaybedildi!");
 });
 
-///////KURULUM KISMI SON//////////
+client.on("debug",a => {
+  console.log(a)
+})
 
+///////KURULUM KISMI SON//////////
+console.log(process.env.TOKEN)
 client.login(process.env.TOKEN);

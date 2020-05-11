@@ -1,9 +1,23 @@
 const Discord = require("discord.js");
-const ayarlar = require("/app/ayarlar.json");
+const ayarlar = require("/app/ayarlar");
 const db = require("quick.db");
 const moment = require("moment");
 
 exports.run = (client, message, args) => {
+  let guild = message.guild;
+
+  if (!guild) guild = client.guilds.cache.find(g => g.id == ayarlar.sunucu);
+  if (!guild) return console.error("Ana sunucu bulunamadı! (ayarlar.sunucu). mute komutu dm üzerinden çalışmadı.")
+
+  let messageMember = message.member;
+
+  if (!messageMember) {
+    messageMember = guild.member(message.author);
+  }
+  if (!messageMember) {
+    return;
+  }
+
   let user = message.mentions.members.first();
 
   if (!user)
@@ -50,7 +64,7 @@ exports.run = (client, message, args) => {
   let authorMaxRoleID = 0;
   let targetMaxRoleID = 0;
 
-  message.member.roles.cache.forEach(role => {
+  messageMember.roles.cache.forEach(role => {
     if (ayarlar.perms.yetkisizAraRoller.some(r => r == role.name)) return console.log(role.name + " rolü yok sayıldı.");
     if (authorMaxRoleID < role.position)
       authorMaxRoleID = role.position
@@ -74,7 +88,7 @@ exports.run = (client, message, args) => {
   //////////////////////////////////////////
 
   // MUTED
-  message.guild.channels.cache.filter(c => c.type == "text").forEach(channel => {
+  guild.channels.cache.filter(c => c.type == "text").forEach(channel => {
 
     channel.updateOverwrite(user.id,
       {
@@ -86,28 +100,26 @@ exports.run = (client, message, args) => {
   user.setNickname(user.displayName.replace("[MUTED]", "") + " [MUTED]")
 
   let süreliDb = new db.table("mute");
-  süreliDb.set(
-    user.id + ".cezaBitiş",
-    parseInt(moment().format("x")) + sure * 60 * 1000
-  );
+  süreliDb.set(user.id + ".cezaBitiş", parseInt(moment().format("x")) + sure * 60 * 1000);
   süreliDb.set(user.id + ".msgChID", message.channel.id);
+  süreliDb.set(user.id + ".cezaVerenID", message.author.id);
 
   let embed1 = new Discord.MessageEmbed()
     .setTitle(`🔒 CHAT MUTE`)
-    .setDescription(
-      `<@${user.id}> kullanıcısı <@${message.author.id}> tarafından **` +
-      sure +
-      ` dakika** susturuldu.\n\n**SEBEP: **_` +
-      sebep +
-      `_`
-    )
+    .setDescription(`<@${user.id}> kullanıcısı <@${message.author.id}> tarafından **` + sure + ` dakika** susturuldu.\n\n**SEBEP: **_` + sebep + `_`)
     .setColor("000")
     .setTimestamp();
 
-  message.channel.send(embed1).then(msg => msg.delete({ timeout: 10000 }));
+  message.channel.send(embed1).then(msg => {
+    //msg.delete({ timeout: 10000 })
+    let cezaBilgi = msg.guild.channels.cache.find(c => c.name == 'ceza-bilgi');
+    if (cezaBilgi)
+      cezaBilgi.send(embed1).catch(er => console.error)
+    else
+      console.error("ceza-bilgi kanalını bulamadım")
+  });
 
-  let cezaBilgi = message.guild.channels.cache.find(channel => channel.name === 'ceza-bilgi');
-  if (cezaBilgi) cezaBilgi.send(embed1);
+
 
 };
 

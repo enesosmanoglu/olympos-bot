@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
-const ayarlar = require("/app/ayarlar.json");
+const ayarlar = require("/app/ayarlar");
 const db = require('quick.db');
+const fs = require('fs');
 
 exports.run = async (client, message, args) => {
 
@@ -8,13 +9,13 @@ exports.run = async (client, message, args) => {
 
     if (!user)
         return message.channel.send(new Discord.MessageEmbed()
-            .setDescription(`${ayarlar.prefix}yetkiliuyar _@kullanıcı_ uyarıSayısı sebep`)
+            .setDescription(`${ayarlar.prefix}yetkiliuyar _@kullanıcı_ uyarıSayısı kuralNo`)
             .setColor(484848)
         ).then(msg => msg.delete({ timeout: 10000 }));
 
     if (args.length < 3)
         return message.channel.send(new Discord.MessageEmbed()
-            .setDescription(`${ayarlar.prefix}yetkiliuyar _@kullanıcı_ uyarıSayısı sebep`)
+            .setDescription(`${ayarlar.prefix}yetkiliuyar _@kullanıcı_ uyarıSayısı kuralNo`)
             .setColor(484848)
         ).then(msg => msg.delete({ timeout: 10000 }));
 
@@ -26,13 +27,13 @@ exports.run = async (client, message, args) => {
     let targetMaxRoleID = 0;
 
     message.member.roles.cache.forEach(role => {
-      if (ayarlar.perms.yetkisizAraRoller.some(r=>r==role.name)) return console.log(role.name + " rolü yok sayıldı.");
+        if (ayarlar.perms.yetkisizAraRoller.some(r => r == role.name)) return console.log(role.name + " rolü yok sayıldı.");
         if (authorMaxRoleID < role.position)
             authorMaxRoleID = role.position
     });
 
     user.roles.cache.forEach(role => {
-      if (ayarlar.perms.yetkisizAraRoller.some(r=>r==role.name)) return console.log(role.name + " rolü yok sayıldı.");
+        if (ayarlar.perms.yetkisizAraRoller.some(r => r == role.name)) return console.log(role.name + " rolü yok sayıldı.");
         if (targetMaxRoleID < role.position)
             targetMaxRoleID = role.position
     });
@@ -52,8 +53,44 @@ exports.run = async (client, message, args) => {
     /* KOD BAŞLANGICI */
     ////////////////////
 
-    let uyarıSayısı = parseInt(args[1]);
-    let sebep = args.slice(2, args.length).join(" ");
+    let uyarıSayısı = args[1];
+    if (!uyarıSayısı.match(/^[0-9\b]+$/) || parseFloat(uyarıSayısı) == 0)
+        return message.channel.send(
+            new Discord.MessageEmbed()
+                .setDescription(
+                    `**Geçerli bir uyarı sayısı girilmemiş ◑.◑**\n\n_Örnek:_ ` +
+                    ayarlar.prefix +
+                    `yetkiliuyarı **@nick** uyarıSayısı kuralNo`
+                )
+                .setColor(10038562)
+                .setTimestamp()
+        );
+    uyarıSayısı = parseFloat(uyarıSayısı)
+    let kuralNo = args[2];
+    if (!kuralNo.match(/^[0-9\b]+$/) || parseFloat(kuralNo) == 0)
+        return message.channel.send(
+            new Discord.MessageEmbed()
+                .setDescription(
+                    `**Geçerli bir kural numarası girilmemiş ◑.◑**\n\n_Örnek:_ ` +
+                    ayarlar.prefix +
+                    `yetkiliuyarı **@nick** uyarıSayısı kuralNo`
+                )
+                .setColor(10038562)
+                .setTimestamp()
+        );
+    kuralNo = parseFloat(kuralNo)
+
+
+    const kurallar = fs.readFileSync('/app/yetkiliKuralları.txt', 'UTF-8').split("♥")
+    if (!kurallar[kuralNo - 1])
+        return message.channel.send(
+            new Discord.MessageEmbed()
+                .setDescription(
+                    `**Girilen numaraya ait bir kural bulunamadı ◑.◑**`
+                )
+                .setColor(10038562)
+                .setTimestamp()
+        );
 
     let rolünVarsayılanDeğeriYoksaVerilecekVarsayılanUyarıSayısı = 2;
     // => Kişinin en yüksek rolünün varsayılan uyarı sayısı önceden belirlenmediyse hatanın önüne geçmek gerek :)
@@ -64,6 +101,16 @@ exports.run = async (client, message, args) => {
 
     let topRole = message.guild.roles.cache.find(r => r.position == targetMaxRoleID);
     // => Kişinin önceden kayıtlı uyarı sayısı yoksa en yüksek rolüne göre uyarı sayısı verileceği için en yüksek rolünü hesapladık.
+
+    if (!ayarlar.perms.yetkili.some(y => y == topRole.name))
+        return message.channel.send(
+            new Discord.MessageEmbed()
+                .setDescription(
+                    `**Seçilen kişi yetkili değil ◑.◑**`
+                )
+                .setColor(10038562)
+                .setTimestamp()
+        );
 
     let userUyarıSayısı;
     // => Kişinin sahip olduğu maksimum uyarı sayısı
@@ -102,22 +149,23 @@ exports.run = async (client, message, args) => {
             message.channel.send("<@" + user + "> hala bir umut var.. Şafak: " + userUyarıSayısı)
         }
     }
-  
+
     db_uyarıSayısı.set(user.id, userUyarıSayısı);
+
 
     let embed1 = new Discord.MessageEmbed()
         .setTitle(`YETKİLİ UYARI SİSTEMİ`)
-        .setDescription(user + ` yetkilisine ` + message.author + ` tarafından **` + uyarıSayısı + ` uyarı** verildi.`)
+        .setDescription(`<@${user.id}> yetkilisine <@${message.author.id}> tarafından **` + uyarıSayısı + ` uyarı** verildi.`)
         .setColor("000")
         .setTimestamp();
 
+    if (kurallar[kuralNo - 1]) {
+        embed1.addField("İhlal Edilen Kural", kurallar[kuralNo - 1])
+    }
+
     let yetkiliUyarıCh = message.guild.channels.cache.find(c => c.name == "yetkili-uyarı");
     if (yetkiliUyarıCh)
-        yetkiliUyarıCh.send(new Discord.MessageEmbed()
-          .setTitle('YETKİLİ UYARI SİSTEMİ')
-          .setDescription(user + ` yetkilisine ` + message.author + ` tarafından **` + uyarıSayısı + ` uyarı** verildi.`)
-          .setTimestamp()
-          .setColor('BLACK'))
+        yetkiliUyarıCh.send(embed1)
 
 };
 
@@ -133,5 +181,5 @@ exports.conf = {
 exports.help = {
     name: 'yetkiliuyarı',
     description: 'Belirttiğiniz kişiye belirtilen sayı kadar uyarı ekler.',
-    usage: 'yetkiliuyarı kullanıcı süre sebep'
+    usage: 'yetkiliuyarı kullanıcı süre kuralNo'
 };

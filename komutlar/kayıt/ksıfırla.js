@@ -1,10 +1,11 @@
 const Discord = require("discord.js");
-const ayarlar = require("/app/ayarlar.json");
+const ayarlar = require("/app/ayarlar");
+const db = require("quick.db")
 
 var prefix = ayarlar.prefix;
 
 exports.run = async (bot, message, args) => {
-  
+
   let rMember =
     message.guild.member(message.mentions.users.first()) ||
     message.guild.members.get(args[0]);
@@ -13,8 +14,8 @@ exports.run = async (bot, message, args) => {
       new Discord.MessageEmbed()
         .setDescription(
           `Kaydı sıfırlanacak kişiyi etiketlemelisin ◑.◑\nÖrnek: ` +
-            ayarlar.prefix +
-            `ksıfırla **@nick**`
+          ayarlar.prefix +
+          `ksıfırla **@nick**`
         )
         .setColor(10038562)
         .setTimestamp()
@@ -77,6 +78,7 @@ exports.run = async (bot, message, args) => {
   await rMember.roles.remove(aRole3.id);
   await rMember.roles.remove(aRole4.id);
   await rMember.setNickname(null, "kayıt sıfırlama");
+  await db.delete(`users_${message.guild.id}.${rMember.user.id}`)
   await message.channel.send(
     new Discord.MessageEmbed()
       .setDescription(`${rMember} kaydı silindi.`)
@@ -85,9 +87,9 @@ exports.run = async (bot, message, args) => {
 };
 
 exports.conf = {
-    perms: ["Zeus", "POSEIDON", "Hera", "Hades", "Demeter", "Athena", "Ares", "Hephaistos", "Aphrodite", "Hermes", "Hestia","Dionysos"],
-    // => Yetkisiz komut: @everyone
-    // => Sadece kayıtlılar: ["Apollo", "Artemis"]
+  perms: ["Zeus", "POSEIDON", "Hera", "Hades", "Demeter", "Athena", "Ares", "Hephaistos", "Aphrodite", "Hermes", "Hestia", "Dionysos"],
+  // => Yetkisiz komut: @everyone
+  // => Sadece kayıtlılar: ["Apollo", "Artemis"]
   enabled: true,
   guildOnly: false,
   aliases: ["ksıfırla"],
