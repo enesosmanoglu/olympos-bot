@@ -28,8 +28,24 @@ app.listen(process.env.PORT);
 setInterval(() => {
   http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
 }, 10000); 
+const terminal = require('node-cmd');
+app.get('/clear-git', (req, res) => {
+	terminal.run('chmod 777 git.sh'); /* Fix no perms after updating */
+	terminal.get('./git.sh', (err, data) => {  // Run the script
+		if (data) console.log(data);
+		if (err) console.log(err);
+	});
+	//terminal.run('refresh');  // Refresh project
+	console.log('Git files cleared!');
+	return res.status(200); // Send back OK status
+});
+setInterval(() => {
+  http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/clear-git`);
+}, 120000); 
 
 //////////////////////////////////////////////////////////////////////
+
+
 
 /* Modüller */
 const Discord = require("discord.js");
@@ -358,5 +374,4 @@ client.on("debug",a => {
 })
 
 ///////KURULUM KISMI SON//////////
-console.log(process.env.TOKEN)
 client.login(process.env.TOKEN);

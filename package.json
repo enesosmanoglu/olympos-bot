@@ -22,7 +22,8 @@
     "moment": "2.24.0",
     "quick.db": "7.0.0-b22",
     "short-number": "1.0.7",
-    "text2png": "2.2.0"
+    "text2png": "2.2.0",
+    "node-cmd": "^3.0.0"
   },
   "engines": {
     "node": "12.16.2"

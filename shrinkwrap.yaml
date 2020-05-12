@@ -8,6 +8,7 @@ dependencies:
   image-size: 0.8.3
   jimp: 0.10.0
   moment: 2.24.0
+  node-cmd: 3.0.0
   quick.db: 7.0.0-b22
   short-number: 1.0.7
   text2png: 2.2.0
@@ -1407,6 +1408,10 @@ packages:
       node: '>= 0.6'
     resolution:
       integrity: sha512-hZXc7K2e+PgeI1eDBe/10Ard4ekbfrrqG8Ep+8Jmf4JID2bNg7NvCPOZN+kfF574pFQI7mum2AUqDidoKqcTOw==
+  /node-cmd/3.0.0:
+    dev: false
+    resolution:
+      integrity: sha1-OP/3CkqqT2WdID61eGJzcBjiT28=
   /node-fetch/2.6.0:
     dev: false
     engines:
@@ -1966,6 +1971,7 @@ specifiers:
   image-size: 0.8.3
   jimp: 0.10.0
   moment: 2.24.0
+  node-cmd: ^3.0.0
   quick.db: 7.0.0-b22
   short-number: 1.0.7
   text2png: 2.2.0
